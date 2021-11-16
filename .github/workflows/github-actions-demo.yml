@@ -1,17 +1,85 @@
-name: GitHub Actions Demo
-on: [push]
+name: Github Actions Demo
+on:
+  push:
+    branches:
+     - 'main'
+
 jobs:
-  Explore-GitHub-Actions:
+  build:
     runs-on: ubuntu-latest
+    env:
+      buildConfiguration: 'Release'
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+      - name: Setup Azure Credential Provider
+        run: sh -c "$(curl -fsSL https://aka.ms/install-artifacts-credprovider.sh)"
+      - name: Clean
+        run: dotnet clean && dotnet nuget locals all --clear
+      - name: Restore
+        run: dotnet restore
+      - name: Build ${{ env.buildConfiguration }} API
+        run: dotnet build --configuration ${{ env.buildConfiguration }} --no-restore
+      - name: Unit Test
+        run: dotnet test --configuration ${{ env.buildConfiguration }} --no-restore
+      # - name: Pack Nuget
+      #   run: |
+      #     dotnet pack --configuration ${{ env.buildConfiguration }} --no-restore /p:Version=1.0.${{ github.run_number }}
+      #     dotnet nuget push "bin/${{ env.buildConfiguration }}/GHActionTest.1.0.${{ github.run_number }}.nupkg" --source "Github_NugetPackages"
+      - name: dotnet publish
+        run: dotnet publish -c ${{ env.buildConfiguration }} -o ${{env.DOTNET_ROOT}}/githubdemo
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: githubdemoArtifact
+          path: ${{env.DOTNET_ROOT}}/githubdemo
+
+  deploy:      
+    runs-on: self-hosted
+    needs: build
+    environment:
+      name: 'staging'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    env:
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: githubdemoArtifact
+      # - name: Deploy to Azure Web App
+      #   id: deploy-to-webapp
+      #   uses: azure/webapps-deploy@v2
+      #   with:
+      #     app-name: 'apex'
+      #     slot-name: 'staging'
+      #     publish-profile: ${{ secrets.APEX_AZURE_PUBLISHING_PROFILE }}
+      #     package: . 
+
+
+
+
+
+
+
+
+# name: GitHub Actions Demo
+# on: [push]
+# jobs:
+#   Explore-GitHub-Actions:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+#       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+#       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+#       - name: Check out repository code
+#         uses: actions/checkout@v2
+#       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+#       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+#       - name: List files in the repository
+#         run: |
+#           ls ${{ github.workspace }}
+#       - run: echo "🍏 This job's status is ${{ job.status }}."

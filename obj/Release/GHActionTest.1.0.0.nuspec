@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>GHActionTest</id>
+    <version>1.0.0</version>
+    <authors>GHActionTest</authors>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework="net6.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Repos\GHActionTest\bin\Release\net6.0\GHActionTest.runtimeconfig.json" target="lib\net6.0\GHActionTest.runtimeconfig.json" />
+    <file src="C:\Repos\GHActionTest\bin\Release\net6.0\GHActionTest.dll" target="lib\net6.0\GHActionTest.dll" />
+  </files>
+</package>
