@@ -3,12 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C7888C09-487B-4B55-A678-4192708EF355}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\github-actions-demo.yml = .github\workflows\github-actions-demo.yml
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{17204700-BD4B-421B-98CF-E028C1FA473C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github Workflows", "Github Workflows", "{0EB2CBF7-AC2D-473F-98C2-03A4393862C8}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\main_ghactiontest.yml = .github\workflows\main_ghactiontest.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
